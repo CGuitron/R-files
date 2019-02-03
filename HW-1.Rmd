@@ -1,0 +1,271 @@
+---
+title: "HW 1-Categorical Data"
+output: html_document
+---
+
+Agresti Problems
+
+1.1
+a. Response variable: attitude towards gun control 
+   Explanatory variables: gender, mother's education 
+b. Response variable: heart disease
+   Explanatory variable: blood pressure, cholesterol level
+c. Response variable: Vote for president
+   Explanatory variables: annual income, race, religion
+d. Response variable: Quality of life
+   Explanatory variable: Marital status
+
+1.2 
+
+Which scale of measurement is most appropriate for the following variables -
+nominal, or ordinal?
+a. Political party affiliation-nominal
+b. Highest degree obtained- ordinal 
+c. Patient condition-ordinal
+d. Hospital location-nominal
+e. Favorite beverage-nominal 
+f. How often feel depressed-ordinal
+
+
+MGS1.1 
+
+Multiple Choice Random Guessing Each of 20 multiple-choice questions on an exam has four possible answers but only one correct response. For each question, a student randomly selects one response as the answer.
+
+
+a. Distribution of the student's number of correct answers on the exam. (Remember to specify the values of the parameters).
+
+$Y \sim Binomial \big( 20, 0.25 \big)$
+
+b. Generate a table of probabilities containing a list of each of the 21 possible outcomes (0 to 20 answers correct). If any probability is less than 0.0001, you can just list it as "< 0.0001". Do not use "E" notation.
+
+```{r}
+probvec<-seq(0, 21,by=1)
+results<-round(dbinom(probvec, 20, 0.25),digits=2)
+probtab<-data.frame(probvec, results)
+print(probtab)
+
+dbinom (0, 20, 0.25)
+```
+
+c. Name the assumptions that go with this distribution. Do you think that they are satisfied?
+1. Each trial is independent
+2. Trials have only two outcomes
+3. Each trial has an equal probability of success.
+
+I think they are satisfied if the answers are completely at random and the result of one question doesn't influence the result of another question. 
+
+d. What is the probability that the student gets 9 or more correct responses?
+$Pr (Y \geq 9)= Pr (Y=9) + Pr (Y=10) + Pr (Y=11)+....+Pr (Y=20)= 0.04092517$
+
+```{r}
+dbinom (9,20, 0.25) + dbinom (10,20, 0.25) + dbinom (11,20, 0.25) + dbinom (12,20, 0.25) + dbinom (13,20, 0.25) + dbinom (14,20, 0.25) + dbinom (15,20, 0.25) + dbinom (16,20, 0.25) + dbinom (17,20, 0.25) + dbinom (18,20, 0.25) + dbinom (19,20, 0.25) + dbinom (20,20, 0.25)
+
+probvec<-seq(9,21, by=1)
+prob<-dbinom(probvec, 20, 0.25)
+probsum<-sum(dbinom(probvec, 20, 0.25))
+probsum
+```
+
+
+e. What is the probability that the student gets 2 or fewer questions correct?
+$Pr (Y \leq 2)= Pr (Y=0) + Pr (Y=1) + Pr (Y=1)= (2,20,0.25)$
+
+```{r}
+pbinom (2,20,0.25)
+```
+
+
+f. What is the expected number of correct answers?
+5 correct answers
+
+$\mu (Y) = N\pi= 20*0.25=5$
+
+MGS1.2 Coin flipping 
+
+N= 9  
+ ???????.
+a. Assuming $ \pi$=????0.5, specify the probabilities for the possible values for $Y$????????, and find the distribution's mean and standard deviation.
+
+```{r}
+propvec<-seq (0,9, by=1)
+prob<-round(dbinom(propvec, 9, 0.5), digits=2)
+results<-data.frame(propvec, prob)
+results
+
+
+```
+
+$\mu (Y) = N\pi= 9*0.5=4.5$
+
+$\sigma (Y)= \sqrt N\pi (1-\pi)= \sqrt 9*.5 * 0.5= 1.5$
+
+
+b. Find the binomial probabilities for $Y$ when $\pi$ = 0.6 and 0.3
+
+```{r}
+propvec<-seq(0,9, by=1)
+prob<-round(dbinom(propvec,9,0.6), digits=2)
+results<-data.frame (propvec, prob)
+results
+```
+
+```{r}
+propvec<-seq(0,9, by=1)
+prob<-round(dbinom(propvec,9,0.3), digits=2)
+results<-data.frame (propvec, prob)
+results
+```
+
+
+
+c. Suppose that you have a coin that is "not fair" - meaning that the probability of a head is different from 0.5. You observe $y$????????=7 and do not know $\pi$????????. Use R to calculate and graph the likelihood function. What is the MLE of $\pi$????????? Show a graph of the likelihood function when
+y????????=7
+
+The MLE of $\pi$ when there were 7 heads in 9 trials is 0.780
+```{r}
+pi_vals <- seq(0,1,by=0.005)              
+lhood <- dbinom(7,9,prob=pi_vals)        
+plot(pi_vals,lhood, type="l", col="red",  # plot first likelihood
+     main="Likelihoods with 9 trials",
+     xlab = "pi", ylab="Likelihood")
+lhoodtab<-data.frame(pi_vals,lhood)
+lhoodtab2<-subset(lhoodtab, lhood > 0.3)
+print(lhoodtab2)
+MLE<-round(7/9, digits=2)
+```
+
+
+MGS1.3 Sunblock Lotion Each of 12 volunteers used a new skin product that is purported to improve dry skin. At the end of the study 10 out of 12 patients showed improvement. Let $\pi$????????= the true probability of improvement. Our null hypothesis is $H_0???: $????????=0.5. Use a 95% significance level for all tests.
+
+a. Using the binomial test, do a hypothesis test at the 5% level (do all steps) and find the mid p-value for H ????????????????:???????????0.5 . What is your conclusion? (Write a statistical conclusion and a "plain English" conclusion.)
+Research question: Does using the sunblock lotion help improve dry skin? 
+$H_0$: $\pi=0.5$
+$H_A$: $\pi \neq 0.5$
+If we assume the $H_0$ is true, the probability of seeing 10/12 patients with improvement would be:0.0161. With this in mind, the probability of seeing a result as extreme or more extreme when $\pi$=0.5, with mid-p corection  is = Prob(Y=0) + Prob(Y=1) + 0.5(Prob(Y=2)) + 0.5(Prob(Y=10) + Prob(Y=11) + Prob(Y=12)= 0.022
+
+Conclusion: At the 95% level, we reject the null hypothesis. The evidence suggests that the probability of skin improvement using the sunblock lotion is not equal to 0.5.
+
+```{r}
+numsucc<-seq(0,12, by=1)
+probsucc<-dbinom(numsucc,12,0.5)
+plot (numsucc,probsucc, type="l")
+probtab<-round(data.frame(numsucc,probsucc),4)
+probtab
+P_val= sum(dbinom(0,12,0.5) + dbinom(1,12,0.5) +0.5*dbinom(2,12,0.5) +0.5*dbinom(10,12,0.5) + dbinom(11,12,0.5) + dbinom(12,12,0.5))
+P_val
+
+#dbinom(10,12,0.5)
+#1-pbinom (10, 12, 0.5)
+```
+b. Using the binomial test, do a hypothesis test at the 5% level (do all steps) and find the mid p-value for $H_A:\pi$????????????????:????????>0.5 . What is your conclusion? (Write a statistical conclusion and a "plain English" conclusion.)
+Research question: is the probability of improving dry skin when using the lotion higher than 5?
+$H_0:\pi\leq 5$
+$H_A: \pi>5$
+The probability of seeing 10 or more people improving assuming $H_0$ is true is= 0.5 Prob(Y=10) + Prob(Y=11) +  Prob(Y=12)= 0.011.
+Conclusion: at the 95% level, we reject the null hypothesis. The evidence suggets that the probability of improving dry skin using the lotion is greater than 0.5.
+
+```{r}
+p_value=0.5*dbinom(10, 12, 0.5) + dbinom(11, 12, 0.5) + dbinom (12, 12, 0.5)
+p_value
+```
+
+
+c. What is the Agresti-Coull 95% confidence interval for $\pi$
+
+```{r}
+y=10
+n=12
+p_prime=(y+2)/(n+4)
+z=abs(qnorm(0.05/2))
+stat=(p_prime * (1-p_prime))/(n+4)
+Al=p_prime - z*(sqrt(stat))
+Al
+Au= p_prime + z*(sqrt(stat))
+Au
+```
+The Agresti-Coull 95% CI is (0.538,0.962)
+
+????
+d. What is the Score (inversion) 99% confidence interval for ?????????
+```{r}
+n=12
+pvec<-seq(0,1,by=0.01)
+p=10/12
+z_stat<-((p-pvec)/(sqrt(pvec*(1-pvec))/n))
+threshold= abs(qnorm(0.01/2))
+prob_tab<-data.frame (pvec, z_stat)
+prob_tab_2<-prob_tab[abs(z_stat)<=abs(threshold),]
+prob_tab_2
+```
+The Score 99% CI is (0.74,0.89)
+
+
+MGS1.4 Flu Vaccinations On the first day of class, we did a poll and found that 16 out of 44 students had received their flu vaccination for the 2018-19 flu season. Among all US residents of the 18-49 age group, 33.6% have been vaccinated. Assume that our class is a random sample of Cornell students.
+
+a. Do a hypothesis test, using the Score statistic, to test of the hypothesis that Cornell students are vaccinated at a rate of 33.6%, versus a two-sided alternative. Be sure in include a "plain English" conclusion. Perform the test at the $\alpha$????????=5% level.
+Research question: is the proportion of students who received the flu vaccine at Cornell similar to the national average?
+$H_0: \pi=\pi_0=0.336$
+$H_A: \pi\neq 0.336$
+Test statistic= 0.388
+
+```{r}
+n=44
+p=16/44
+p_0=0.336
+#z=((p-p_0)/(sqrt((p_0*(1-p_0)/n))
+za= p-p_0
+zb= (p_0*(1-p_0))/n
+z=za/sqrt(zb)
+1-pnorm(z)
+```
+
+b. Calculate the Agresti-Coull confidence interval for the true vaccination proportion, based on our class sample. Does this interval support the conclusion in part (a)?
+```{r}
+n=44
+y=16
+pp=(y+2)/(n+4)
+z=abs(qnorm(0.05/2))
+stat=sqrt((pp*(1-pp))/(n+4))
+Al= pp - z*stat
+Au=pp + z*stat
+```
+The Agresti-Coull 95% CI for the true vaccination proportion is (0.238,0.512). This interval includes $\pi_0$, so we fail to reject the null hypothesis. This result supports the conclusion in part a.
+
+MGS 1.5 Coverage Probabilities Your task is to use simulation to estimate the coverage probabilities of Wald and Agresti-Coull confidence intervals in four different situations:
+1)$\pi$????????=0.1,????????=15
+2)$\pi$????????=0.1,????????=75
+3)$\pi$????????=0.55,????????=15
+4 $\pi$????????=0.55,????????=75
+You should use 10,000 simulations of each of the above situations, to find the coverage probabilities. Please include your R code. Write your answers in the table below.
+1)
+```{r}
+n=15
+pi=0.1
+sim<-rbinom (10000,n, pi)
+p<-(sim/n)
+pp<-(sim+2)/(n+4)
+z=abs(qnorm(0.05/2))
+stat=sqrt((pp*(1-pp))/(n+4))
+Al=abs(pp - (z*stat))
+Au=pp + (z*stat)
+result<- p >= Al & p <= Au
+count_true<-length(which(result=="TRUE"))
+count_true/10000
+```
+
+```{r}
+n=15
+pi=0.1
+sim<-rbinom (10000,n, pi)
+p<-(sim/n)
+z=abs(qnorm(0.05/2))
+stat=sqrt((p*(1-p))/n)
+Wl=abs(p - (z*stat))
+Wu=p + (z*stat)
+result<- p >= Wl & p <= Wu
+count_true<-length(which(result=="TRUE"))
+count_true/10000
+```
+
+
+
